@@ -3,7 +3,7 @@ services:
     - docker
 
 before_install:
-    - docker build -t waytkheming/react-test -f ./clientDockerfile.dev ./client
+    - docker build -t waytkheming/react-test -f ./client/Dockerfile.dev ./client
 
 script:
     - docker run -e CI=true waytkheming/react-test npm test -- --coverage
