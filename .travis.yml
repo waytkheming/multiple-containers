@@ -1,0 +1,23 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t waytkheming/react-test -f ./clientDockerfile.dev ./client
+
+script:
+    - docker run -e CI=true waytkheming/react-test npm test -- --coverage
+
+after_success:
+    - docker build -t waytkheming/multi-client ./client
+    - docker build -t waytkheming/multi-nginx ./nginx
+    - docker build -t waytkheming/multi-server ./server
+    - docker build -t waytkheming/multi-worker ./worker
+    # log in to docker cli
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # take image and push to dockerhub
+    - docker push waytkheming/multi-client
+    - docker push waytkheming/multi-nginx
+    - docker push waytkheming/multi-server
+    - docker push waytkheming/multi-worker
+
